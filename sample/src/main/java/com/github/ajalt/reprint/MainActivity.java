@@ -87,7 +87,8 @@ public class MainActivity extends AppCompatActivity {
         Reprint.authenticate(new AuthenticationListener() {
             @Override
             public void onSuccess(int moduleTag) {
-                showSuccess();
+                showSuccess
+                        ();
             }
 
             @Override

@@ -11,6 +11,8 @@ import com.github.ajalt.reprint.core.ReprintModule;
 import com.samsung.android.sdk.pass.Spass;
 import com.samsung.android.sdk.pass.SpassFingerprint;
 
+import javax.crypto.Cipher;
+
 /**
  * A Reprint module that authenticates fingerprints using the Samsung Pass SDK.
  * <p>
@@ -118,7 +120,7 @@ public class SpassReprintModule implements ReprintModule {
     }
 
     @Override
-    public void authenticate(final CancellationSignal cancellationSignal, final AuthenticationListener listener, final boolean restartOnNonFatal) {
+    public void authenticate(final CancellationSignal cancellationSignal, final Cipher cipher, final AuthenticationListener listener, final boolean restartOnNonFatal) {
         if (spassFingerprint == null) {
             spassFingerprint = new SpassFingerprint(context);
         }
@@ -173,7 +175,7 @@ public class SpassReprintModule implements ReprintModule {
                 private void fail(AuthenticationFailureReason reason, boolean fatal, String message, int status) {
                     listener.onFailure(reason, fatal, message, TAG, status);
                     if (!fatal && restartOnNonFatal)
-                        authenticate(cancellationSignal, listener, true);
+                        authenticate(cancellationSignal, cipher,listener, true);
                 }
 
                 @Override

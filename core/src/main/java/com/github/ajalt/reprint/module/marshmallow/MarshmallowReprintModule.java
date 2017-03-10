@@ -14,6 +14,8 @@ import com.github.ajalt.reprint.core.AuthenticationListener;
 import com.github.ajalt.reprint.core.Reprint;
 import com.github.ajalt.reprint.core.ReprintModule;
 
+import javax.crypto.Cipher;
+
 /**
  * A reprint module that authenticates fingerprint using the marshmallow Imprint API.
  * <p/>
@@ -167,7 +169,7 @@ public class MarshmallowReprintModule implements ReprintModule {
     }
 
     @Override
-    public void authenticate(final CancellationSignal cancellationSignal, final AuthenticationListener listener, final boolean restartOnNonFatal) throws SecurityException {
+    public void authenticate(final CancellationSignal cancellationSignal, final Cipher cipher, final AuthenticationListener listener, final boolean restartOnNonFatal) throws SecurityException {
         final FingerprintManager fingerprintManager = fingerprintManager();
 
         if (fingerprintManager == null) {
@@ -182,9 +184,13 @@ public class MarshmallowReprintModule implements ReprintModule {
         final android.os.CancellationSignal signalObject = cancellationSignal == null ? null :
                 (android.os.CancellationSignal) cancellationSignal.getCancellationSignalObject();
 
+        FingerprintManager.CryptoObject cryptoObject = null;
+        if(cipher != null) {
+            cryptoObject = new FingerprintManager.CryptoObject(cipher);
+        }
         // Occasionally, an NPE will bubble up out of FingerprintManager.authenticate
         try {
-            fingerprintManager.authenticate(null, signalObject, 0, callback, null);
+            fingerprintManager.authenticate(cryptoObject, signalObject, 0, callback, null);
         } catch (NullPointerException e) {
             logger.logException(e, "MarshmallowReprintModule: authenticate failed unexpectedly");
             listener.onFailure(AuthenticationFailureReason.UNKNOWN, true,

@@ -9,6 +9,8 @@ import com.github.ajalt.reprint.module.marshmallow.MarshmallowReprintModule;
 
 import java.lang.reflect.Constructor;
 
+import javax.crypto.Cipher;
+
 /**
  * Methods for performing fingerprint authentication.
  *
@@ -84,6 +86,10 @@ enum ReprintInternal {
      *                          indefinitely.
      */
     public void authenticate(final AuthenticationListener listener, boolean restartOnNonFatal, int restartCount) {
+        authenticate(listener,null,restartOnNonFatal,restartCount);
+    }
+
+    public void authenticate(final AuthenticationListener listener, Cipher cipher, boolean restartOnNonFatal, int restartCount) {
         if (module == null || !module.isHardwarePresent()) {
             listener.onFailure(AuthenticationFailureReason.NO_HARDWARE, true,
                     getString(R.string.fingerprint_error_hw_not_available), 0, 0);
@@ -98,9 +104,9 @@ enum ReprintInternal {
 
         cancellationSignal = new CancellationSignal();
         if (restartOnNonFatal) {
-            module.authenticate(cancellationSignal, restartingListener(listener, restartCount), true);
+            module.authenticate(cancellationSignal,cipher ,restartingListener(listener,cipher,restartCount), true);
         } else {
-            module.authenticate(cancellationSignal, listener, false);
+            module.authenticate(cancellationSignal,cipher, listener, false);
         }
     }
 
@@ -115,7 +121,7 @@ enum ReprintInternal {
         return context == null ? null : context.getString(resid);
     }
 
-    private AuthenticationListener restartingListener(final AuthenticationListener originalListener, final int restartCount) {
+    private AuthenticationListener restartingListener(final AuthenticationListener originalListener,final Cipher cipher ,final int restartCount) {
         return new AuthenticationListener() {
             @Override
             public void onSuccess(int moduleTag) {
@@ -126,7 +132,7 @@ enum ReprintInternal {
             public void onFailure(AuthenticationFailureReason failureReason, boolean fatal, CharSequence errorMessage, int moduleTag, int errorCode) {
                 if (module != null && cancellationSignal != null &&
                         failureReason == AuthenticationFailureReason.TIMEOUT && restartCount > 0) {
-                    module.authenticate(cancellationSignal, restartingListener(originalListener, restartCount - 1), true);
+                    module.authenticate(cancellationSignal,cipher ,restartingListener(originalListener, cipher,restartCount - 1),true);
                 } else {
                     originalListener.onFailure(failureReason, fatal, errorMessage, moduleTag, errorCode);
                 }

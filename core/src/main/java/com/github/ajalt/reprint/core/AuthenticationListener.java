@@ -1,5 +1,7 @@
 package com.github.ajalt.reprint.core;
 
+import javax.crypto.Cipher;
+
 /**
  * A listener that is notified of the results of fingerprint authentication.
  */
@@ -31,4 +33,6 @@ public interface AuthenticationListener {
     void onFailure(AuthenticationFailureReason failureReason,
                    boolean fatal, CharSequence errorMessage,
                    int moduleTag, int errorCode);
+
+
 }

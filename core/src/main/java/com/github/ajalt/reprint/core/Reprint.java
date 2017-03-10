@@ -2,6 +2,8 @@ package com.github.ajalt.reprint.core;
 
 import android.content.Context;
 
+import javax.crypto.Cipher;
+
 /**
  * Static methods for performing fingerprint authentication.
  * <p/>
@@ -81,6 +83,10 @@ public class Reprint {
         authenticate(listener, DEFAULT_RESTART_COUNT);
     }
 
+    public static void authenticate(AuthenticationListener listener,Cipher cipher) {
+        authenticate(listener, cipher ,DEFAULT_RESTART_COUNT);
+    }
+
     /**
      * Start a fingerprint authentication request.
      * <p/>
@@ -98,6 +104,10 @@ public class Reprint {
      */
     public static void authenticate(AuthenticationListener listener, int restartCount) {
         ReprintInternal.INSTANCE.authenticate(listener, true, restartCount);
+    }
+
+    public static void authenticate(AuthenticationListener listener, Cipher cipher,int restartCount) {
+        ReprintInternal.INSTANCE.authenticate(listener,cipher,true,restartCount);
     }
 
     /**

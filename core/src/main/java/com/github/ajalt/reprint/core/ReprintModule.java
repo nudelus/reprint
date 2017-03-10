@@ -2,6 +2,8 @@ package com.github.ajalt.reprint.core;
 
 import android.support.v4.os.CancellationSignal;
 
+import javax.crypto.Cipher;
+
 /**
  * A reprint module handles communication with a specific fingerprint api.
  * <p/>
@@ -43,7 +45,7 @@ public interface ReprintModule {
      *                           ensure that the sensor is not running before calling any listener
      *                           callbacks.
      */
-    void authenticate(CancellationSignal cancellationSignal, AuthenticationListener listener, boolean restartOnNonFatal);
+    void authenticate(CancellationSignal cancellationSignal, Cipher cipher, AuthenticationListener listener, boolean restartOnNonFatal);
 
     /**
      * A tag uniquely identifying this class. It must be the same for all instances of each class,
