@@ -67,6 +67,9 @@ enum ReprintInternal {
         return this;
     }
 
+    public int getTag() { return module != null ? module.tag() : 0;
+    }
+
     public boolean isHardwarePresent() {
         return module != null && module.isHardwarePresent();
     }

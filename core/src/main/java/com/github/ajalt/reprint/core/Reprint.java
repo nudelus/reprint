@@ -29,6 +29,10 @@ public class Reprint {
         ReprintInternal.INSTANCE.initialize(context, null);
     }
 
+    public static int tag() {
+        return ReprintInternal.INSTANCE.getTag();
+    }
+
     /**
      * Load all available reprint modules.
      * <p/>
